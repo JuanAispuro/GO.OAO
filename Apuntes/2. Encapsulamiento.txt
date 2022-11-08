@@ -1,0 +1,10 @@
+ -- 2.1 Nombres de campos y metodos exportados o no exportados en lugar de modificadores de acceso --
+
+Creamos un modulo.
+Con los identificadores mostramos que puede ver el usuario con el paquete y que no.
+
+un identificador exportado es que el primer caracter es mayuscula
+
+
+-- 2.2 Funcion New() en lugar de metodo constructor --
+Se puede crear una funcion de tipo new que reciba de parametro los valores que se asignaran a la estructura.
