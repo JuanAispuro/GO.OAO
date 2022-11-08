@@ -1,0 +1,101 @@
+-- 1.1 ¿Es Go un lenguaje de Programación Orientado a objetos?
+Si y no
+
+Cuatro pilares de la Programación Orientado a objetos
+- Abstracción
+- Encapsulamiento
+- Herencia
+- Polimorfismo
+
+1) Abstracción 
+Proceso mental que realizamos para aislar un elemento del mundo real o ficticio.
+En un lenguaje de Programación:
+Caracteristica del lenguaje para plasmar caracteristicas o acciones de los objetos.
+
+En Go no hay clases, pero si hay estructuras donde vamos a explicarlo y las acciones con los metodos.
+Algo que tiene go es que los metodos no son exclusivos de las estructuras, sino que puedes implementar metodos a funciones, mapas, arrays, slices, strings, int, etc.
+
+2) Encapsulamiento
+Caracteristica de un lenguaje para proteger las propiedades o metodos del usuario que esta trabajando con la clase.
+en otros: private, public, protected, en Go no se tienen estos modificadores pero se tienen los modificadores exportados o no exportados.
+
+3) Herencia
+Tipos que esten integrados en otros tipos.
+
+4) Polimorfismo 
+Poli - muchos, morfo - formas (muchas formas)
+Mandar mensanjes sintacticamente iguales y que diferentes tipos puedan contestar diferentes mensanjes.
+
+-- 1.2 Abstracción a traves de estructuras --
+[Estructuras] colección de campos.
+Para Crear una estructura es: [Type Nombre struct]
+    //Type nombre struct {}
+    type Course struct {
+        Name string
+        Price float64
+        IsFree bool 
+        UsersID []uint
+        Clasess map[uint]string
+    }
+
+    func main(){
+        //Tambien no es necesario poner el identificador aun lado simplemente siguiendo el orden de entrada.
+        /*
+            "Go Programación Orientada a Objetos",
+            15.99,
+            false,
+            []uint{12,56,89},
+            map[uint]string{
+                1: "Introducción",
+                2: "Estructuras",
+                3: "Maps",
+        */
+        //Variable Go
+        Go := Course{
+            Name: "Go Programación Orientada a Objetos",
+            Price: 15.99,
+            IsFree: false,
+            UsersID: []uint{12,56,89},
+            Clasess:map[uint]string{
+                1: "Introducción",
+                2: "Estructuras",
+                3: "Maps",
+            },
+        }
+        fmt.Println(Go.Name)
+
+        //Si quiero nomas poner algunos valores si queremos usar pocos, se tienen que inicialziar los nombres.
+        css := Course{
+            Name: "CSS",
+            IsFree: true,
+        }
+        fmt.Printf("%+v\n", css)
+        //Mas corto
+        js := Course {}
+        js.Name = "JavaScript"
+        js.UsersID = []uint{12,67}
+        fmt.Printf("%+v", js)
+    }
+
+-- 1.3 Métodos Parte 1 --
+//Indicamos que es un metodo para que se vincule con el struct
+//En Go no es buena practica utilizar los {this}
+    func (c Course) PrintClasess() {
+        text := "Las clases son: "
+        //forange
+        for _, class := range c.Clasess{
+            text += class + ", "
+        }
+        //Ponemos un slice para el comienzo del string hasta el final menos 2 para el espacio.
+        fmt.Println(text[:len(text)-2])
+    }
+Asi lo imprimiriamos 	Go.PrintClasess().
+
+-- 1.4 Métodos Parte 2 --
+Creamos un nuevo archivo course.go y mandamos los datos.
+
+-- 1.5 Métodos con receptores de puntero --
+//puntero
+func (c *Course) ChangePrice (price float64){
+	c.Price = price
+}
