@@ -1,0 +1,25 @@
+-- 3.1 ¿Por qué no hay herencia en Go? --
+Elección de diseno intencional, decidiendo no incorporandola.
+
+Gran sobreescritura de métodos
+
+Usar composición y no herencia
+
+- Herencia [Es un] Herencia Simple 1 a 1.
+Hay jerarquia de niveles.
+Polimorfimos con Herencia
+Test dificiles
+
+
+- Composición [tiene/usa] Objetos relacionados 1 a muchos.
+No hay jerarquia, hay relaciones donde se aplican SRP, DI,
+Asignando responsabilidades a las clases.
+Polimorfimo con Interfaces.
+Test fáciles DI, DIP.
+
+
+Un tipo puede satisfacer múltiples interfaces.
+Incrustación de campos, integrar tipos en otros tipos.
+
+
+-- 3.2 Composición de estructuras --
