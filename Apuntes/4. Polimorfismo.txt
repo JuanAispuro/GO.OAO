@@ -1,0 +1,282 @@
+-- 4.1 Interfaces Parte 1 --
+Fomenta el uso de interfaces de un solo metodo,
+las buenas platicas el nombre de la interfaz tiene que ser el nombre del metodo con terminacion (er).
+
+Si el tipo esta cumpliendo Go lo valida primero.
+
+Dos tipos de datos diferente que estan utilizando la interfaz greet
+    package main
+
+    import "fmt"
+
+    //Declaración de interface
+    type Greeter interface {
+        Greet()
+    }
+
+    //estructura
+    type Person struct {
+        Name string
+    }
+
+    func (p Person) Greet() {
+        fmt.Printf("Hola soy %s", p.Name)
+    }
+
+    type Text string
+
+    func (t Text) Greet() {
+        fmt.Printf("Hola soy %s", t)
+    }
+
+    func main() {
+        var g Greeter = Person{Name: "Juan"}
+        g.Greet()
+        //Es un tipo texto no un string por lo que lo cambiaremos como:
+        var t Greeter = Text("Texto")
+        t.Greet()
+    }
+
+-- 4.2 Interfaces Parte 2 --
+Los valores se consideran una dupla de un valor en las interfaces.
+Aqui creamos una función para unir los dos valores
+func GreetAll(gs ...Greeter) {
+	for _, g := range gs {
+		g.Greet() //valor tipo %v
+		fmt.Printf("\t Valor: %v, Tipo: %T\n", g, g)
+	}
+}
+func (t Text) Greet() {
+	fmt.Printf("Hola soy %s", t)
+}
+
+func main() {
+	p := Person{Name: "Juan"}
+
+	//Es un tipo texto no un string por lo que lo cambiaremos como:
+	var g Text = Text("Texto")
+	GreetAll(p, g)
+}
+
+-- 4.3 Interfaces Parte 2 --
+Un unico metodo que llame el metodo bye y el metodo greet,  aqui implementaremos
+los tipos embebidos, tambien se pueden ser interfaces, pero solo interfaces,
+la condición es que las interfaces que se embeben no deben tener un metodo igual en las interfaces que metemos.
+
+Eliminariamos GreetAll y byeall
+    package main
+
+    import (
+        "fmt"
+    )
+
+    // Declaración de interface
+    type Greeter interface {
+        Greet()
+    }
+
+    // Metodo bye
+    type Byer interface {
+        Bye()
+    }
+
+    // Interfaz completa
+    type GreeterByer interface {
+        Greeter
+        Byer
+    }
+
+    // estructura
+    type Person struct {
+        Name string
+    }
+
+    func (p Person) Greet() {
+        fmt.Printf("Hola soy %s", p.Name)
+    }
+
+    func (p Person) Bye() {
+        fmt.Printf("Adios soy %s", p.Name)
+    }
+
+    type Text string
+
+    /*
+        func GreetAll(gs ...Greeter) {
+            for _, g := range gs {
+                g.Greet() //valor tipo %v
+                fmt.Printf("\t Valor: %v, Tipo: %T\n", g, g)
+            }
+        }
+
+        func ByeAll(bs ...Byer) {
+            for _, b := range bs {
+                b.Bye() //valor tipo %v
+                fmt.Printf("\t Valor: %v, Tipo: %T\n", b, b)
+            }
+        }
+    */
+    func (t Text) Greet() {
+        fmt.Printf("Hola soy %s", t)
+    }
+
+    func (t Text) Bye() {
+        fmt.Printf("Adios soy %s", t)
+    }
+    func All(gbs ...GreeterByer) {
+        for _, gb := range gbs {
+            gb.Greet()
+            gb.Bye()
+        }
+    }
+    func main() {
+        p := Person{Name: "Juan"}
+
+        //Es un tipo texto no un string por lo que lo cambiaremos como:
+        var t Text = Text("Texto")
+        All(p, t)
+    }
+
+ -- 4.4 Intefaces Parte 4 --
+ Agregamos esta función la cual puede retornar directamente un texto con solo imprimirlo gracias a la interfaz de fmt.
+ func (p Person) String() string {
+	//Con esto persona utilizo la interfaz stringer de format.
+	return "Hola soy una persona y mi nombre es: " + p.Name
+}
+ -- 4.5 Implementar interfaces usando receptores de punteros vs receptores de valor --
+ Si tenemos una mezcla de metodos como receptores normales, siempre mandamos un puntero para que tome el receptor normal como receptor de puntero,
+ Go recomienda no tener que juntar los dos recepetores en un código, mejor poner todos los metodos de tipo puntero.
+ package main
+
+    import "fmt"
+
+    type Storager interface {
+        Get() string //getter
+        Set(string)  //setter
+    }
+    type Person struct {
+        name string
+    }
+
+    func NewPerson(name string) *Person {
+        return &Person{name}
+    }
+    func (p *Person) Get() string {
+        return p.name
+    }
+
+    // Va a actualizar el nombre de la persona
+    // Para que se actualice el mismo es con el puntero (*)
+    func (p *Person) Set(name string) {
+        p.name = name
+    }
+    func Exec(s Storager, name string) {
+        s.Set(name)
+        fmt.Println(s.Get())
+    }
+    func main() {
+        p := NewPerson("Juan")
+        Exec(p, "Armando")
+    }
+
+-- 4.6 Polimorfismo a través de interfaces --
+Uso de factory method,
+De manera que podemos implementar cualquier objeto de diferentes metodos.
+    package main
+
+    import "fmt"
+
+    type PayMethod interface {
+        Pay()
+    }
+
+    type Paypal struct{}
+    type Cash struct{}
+    type CreditCard struct{}
+
+    func (p Paypal) Pay() {
+        fmt.Println("Pagado por Paypal")
+    }
+
+    func (p Cash) Pay() {
+        fmt.Println("Pagado con Efectivo")
+    }
+    func (p CreditCard) Pay() {
+        fmt.Println("Pagado con Tarjeta de Credito")
+    }
+
+    //Devolvemos el paymethod
+    func Factory(method uint) PayMethod {
+        switch method {
+        case 1:
+            return Paypal{}
+        case 2:
+            return Cash{}
+        case 3:
+            return CreditCard{}
+        default:
+            //retornamos nulo.
+            return nil
+        }
+    }
+
+    func main() {
+        var method uint //variable
+        //Solicitar
+        fmt.Println("Digite un número para su metodo de pago.")
+        fmt.Println("\t 1. Paypal 2: Efectivo 3: Tarjeta de Credito")
+        _, err := fmt.Scanln(&method)
+        //if para evitar que ponga un numero mal
+        if err != nil {
+            panic("debe digitar un número valido.")
+        }
+        if method > 3 {
+            panic("debe digitar un numero de las opciones.")
+        }
+
+        //Llamamos a la fabrica
+        paymethdo := Factory(method)
+        paymethdo.Pay()
+    }
+
+-- 4.7 Empty interface --
+Cuando no asginamos ningun metodo de manera que este es vació el valor y el tipo serian nulos.
+de manera que si ejecutamos el metodo directo, habra un error por que el tipo es nulo.
+Cualquier tipo existente que este nulo automaticamente mostrara un empty interface.
+Cuando no conocemos el tipo que recibiremos las interfaces vacias son las mejores para diversificarlas.
+package main
+
+    import "fmt"
+
+    type exampler interface {
+        x()
+    }
+
+    func wrapper(i interface{}) {
+        fmt.Printf("Valor: %v, Tipo: %T", i, i)
+
+    }
+
+    func main() {
+        // var e exampler
+        // e.x()
+        wrapper(12)
+        wrapper(14.32)
+        wrapper(false)
+        wrapper("Juan")
+    }
+
+-- 4.8 Type assertions --
+Convertir a mayusculas la interface usando type assertions para controlar 
+los valores de las interfaces vacias
+    func wrapper(i interface{}) {
+        fmt.Printf("Valor: %v, Tipo: %T", i, i)
+        //esto es un type assetions
+        v, ok := i.(string) //validación de forma que seria un booleano, si es correcto devolvera true.
+        if ok {
+            fmt.Println("\t%s\n", strings.ToUpper(v))
+        }
+    }
+-- 4.9 Type switches --
+Permite trabajar de una forma mas comoda que el type assetions, si queremos que hacer en diferentes valores
+se utilizara un switch para validar diferentes tipos.

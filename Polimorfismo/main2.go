@@ -1,13 +1,15 @@
 package main
 
-import "fmt"
+import (
+	"fmt"
+)
 
-//Declaración de interface
+// Declaración de interface
 type Greeter interface {
 	Greet()
 }
 
-//estructura
+// estructura
 type Person struct {
 	Name string
 }
@@ -18,14 +20,20 @@ func (p Person) Greet() {
 
 type Text string
 
+func GreetAll(gs ...Greeter) {
+	for _, g := range gs {
+		g.Greet() //valor tipo %v
+		fmt.Printf("\t Valor: %v, Tipo: %T\n", g, g)
+	}
+}
 func (t Text) Greet() {
 	fmt.Printf("Hola soy %s", t)
 }
 
 func main() {
-	var g Greeter = Person{Name: "Juan"}
-	g.Greet()
+	p := Person{Name: "Juan"}
+
 	//Es un tipo texto no un string por lo que lo cambiaremos como:
-	var t Greeter = Text("Texto")
-	t.Greet()
+	var g Text = Text("Texto")
+	GreetAll(p, g)
 }

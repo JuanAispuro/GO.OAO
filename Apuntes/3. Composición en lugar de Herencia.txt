@@ -23,3 +23,95 @@ Incrustación de campos, integrar tipos en otros tipos.
 
 
 -- 3.2 Composición de estructuras --
+Estructura colección de campos
+
+indicamos un nombre de campo y indicamos el tipo de dato
+ej. client customer.Customer
+En esta actividad creamos un código de factura usando diferentes modulos.
+
+
+-- 3.3 Tipos Parte 1 --
+Podemos crear en un paquete un nuevo tipo en un modulo, enlazarlo y crear un nuevo mediante el uso de este.
+
+- Los tipos declarados tienen dos tipos -
+Declaraciones de alias
+- type MyAlias = course
+Definiciones de tipo
+- type newCourse course
+    package main
+    import "fmt"
+    type course struct {name string}
+    func (c course) Print() {fmt.Printf("%+v\n", c)}
+
+    func main() {
+        c := newCourse{name: "Go"}
+        // c.Print()
+        fmt.Printf("El tipo es: %T\n", c)
+    }
+
+-- 3.4 Tipos Parte 2 --
+Se le puede agregar metodos a los tipos booleanos.
+type newBool bool
+
+func (b newBool) String() string {
+	//si el valor de b es verdado da verdadero sino da falso.
+	if b {
+		return "VERDADERO"
+	}
+	return "FALSO"
+}
+
+var b newBool = false
+fmt.Println(b.String())
+
+
+-- 3.5 Tipos Parte 3 --
+Usamos lo de invoice para agregarle nuevos tipos.
+asignarle un total a un nuevo tipo en vez de usar una funcion
+
+-- 3.6 Cómo embeber tipos en estructuras --
+Embeber la estructura persona a la estructura empleado
+ si dentro de la estructura nomas ponemos el tipo de datos embebemos ese tipo, diciendo que los campos de persona se conviertan en campos y metodos de tipos empleado.
+ pero cuando se manden, el receptor debe ser tipo interno, de forma que empleado tiene el campo saludar y nombre y edad.
+ package main
+
+    import "fmt"
+
+    type Person struct {
+        Name string
+        Age  uint
+    }
+
+    func NewPerson(name string, age uint) Person {
+        return Person{name, age}
+    }
+    func (p Person) Greet() {
+        fmt.Println("Hello")
+    }
+
+    type Employee struct {
+        Person
+        Salary float64
+    }
+
+    //Constructor
+    func NewEmployee(name string, age uint, salary float64) Employee {
+        return Employee{NewPerson(name, age), salary}
+    }
+
+    // calcular nomina
+    func (e Employee) Payroll() {
+        fmt.Println(e.Salary * 0.90)
+    }
+
+    func main() {
+
+        e := NewEmployee("Juan", 30, 1000000)
+        fmt.Println(e.Name, e.Age)
+        e.Greet()
+        e.Payroll()
+    }
+
+-- 3.7 Sobre escritura de métodos --
+Sobreescribir un metodo
+ - Ocultación de metodos.
